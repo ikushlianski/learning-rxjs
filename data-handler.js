@@ -5,11 +5,12 @@ const axios = require('axios');
 const { map, mergeMap, filter } = require('rxjs/operators');
 const { from, concat, of, zip } = require('rxjs');
 
+console.time('rxjs');
 // albums of all users
 const albums$ = from(axios('https://jsonplaceholder.typicode.com/users/1/albums'))
   .pipe(
     mergeMap(albums => albums.data),
-    filter(album => album.title.includes('molestiae')),
+    filter(album => album.title.indexOf('molestiae') > -1),
   );
 
 const fullUsers$ = from(albums$)
@@ -22,6 +23,6 @@ const fullUsers$ = from(albums$)
 zip(albums$, fullUsers$)
   .subscribe(
     ([albumObj, userName]) => {
-      console.log(`${userName} used word "molestiae" in album "${albumObj.title}"`)
+      console.timeEnd('rxjs');
     }
 );
